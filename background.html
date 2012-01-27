@@ -1,0 +1,77 @@
+<!--
+Copyright (c) 2011 The Chromium Authors. All rights reserved.
+Use of this source code is governed by a BSD-style license that can be
+found in the LICENSE file.
+-->
+<html>
+<head>
+<script>
+
+var store = new Array();
+var queue = new Array();
+//React when a browser icon is clicked.
+chrome.browserAction.onClicked.addListener(function() {
+	chrome.windows.getCurrent(function(win) {
+		chrome.tabs.getSelected(win.id, actionClicked);
+	});
+});
+
+function actionClicked(tab) {
+	chrome.experimental.debugger.attach(tab.id, onAttach.bind(null, tab.id));
+}
+
+function onAttach(tabId) {
+	if (chrome.extension.lastError) {
+		alert("Another debugger is already attached to this tab.");
+		return;
+	}
+	startInterception(tabId);
+}
+
+function startInterception(tabId){
+
+    //window.addEventListener("load", function() {
+    chrome.experimental.debugger.sendRequest(tabId, "Network.enable");
+    chrome.experimental.debugger.onEvent.addListener(onEvent); //aaaa
+    //});
+
+    window.addEventListener("unload", function() {
+    chrome.experimental.debugger.detach(tabId);
+    });
+}
+
+//params is JSON object
+function onEvent(tabId, message, params) {
+    if (message === "Network.requestWillBeSent") { 
+        req = new Object();
+        req.method = params.request.method;
+        req.url = params.request.url;
+        req.post = params.request.postData;
+        store[params.requestId] = req;
+    } else if (message === "Network.responseReceived") {
+		//params {requestId, loaderId, timestamp
+		//type, response} put in array with index requestId 
+        store[params.requestId].req = new Object(); //creates req object - fucking weird
+        req = store[params.requestId].req;
+        store[params.requestId].headers = params.response.requestHeaders;
+        req.headers = params.response.headers;
+        req.statuscode = params.response.status;
+        req.statusText = params.response.statusText;
+        req.url = params.response.url;
+        
+        //chrome.extension.connect({name: tabId});
+        if(queue[tabId] == 1){
+            chrome.tabs.sendRequest(tabId, {greeting: "hello"}, function(response) {});
+        }else{
+            queue[tabId] = 1;
+            
+            //stringify the request and put it in DOM
+            var reqstring = JSON.stringify(req);
+            chrome.tabs.executeScript(tabId,{code:"document.tabId="+tabId+"; document.req = '"+reqstring+"';"});
+            chrome.tabs.executeScript(tabId,{file:"intercept.js"}); 
+        }
+    }
+}
+</script>
+</head>
+</html>
