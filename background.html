@@ -51,7 +51,7 @@ function onEvent(tabId, message, params) {
     } else if (message === "Network.responseReceived") {
 		//params {requestId, loaderId, timestamp
 		//type, response} put in array with index requestId 
-        store[params.requestId].req = new Object(); //creates req object - fucking weird
+        store[params.requestId].req = new Object(); //creates req object
         req = store[params.requestId].req;
         store[params.requestId].headers = params.response.requestHeaders;
         req.headers = params.response.headers;
