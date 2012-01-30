@@ -14,9 +14,9 @@ document.req = JSON.parse(document.req); //tainted
 //try{
 
 chrome.extension.onConnect.addListener(function(port) {
-  alert('connected');
   port.onMessage.addListener(function(msg) {
     alert('message recieved!1');
   });
+  alert('Ready to recieve message');
 });
 //}catch(err){alert(err.message);}

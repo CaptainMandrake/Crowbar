@@ -2,6 +2,8 @@
 Copyright (c) 2011 The Chromium Authors. All rights reserved.
 Use of this source code is governed by a BSD-style license that can be
 found in the LICENSE file.
+
+//Up to onEvent only
 -->
 <html>
 <head>
@@ -59,19 +61,8 @@ function onEvent(tabId, message, params) {
         req.statusText = params.response.statusText;
         req.url = params.response.url;
         
-        //chrome.extension.connect({name: tabId});
         if(queue[tabId] == 1){ //if an overlay has already been injected
-            var port = chrome.tabs.connect(tabId, {name: "00"});
-            alert('Sending message...');
-            port.postMessage({joke: "Knock knock"});
-            alert('Message posted');
-            /*port.onMessage.addListener(function(msg) {
-            if (msg.question == "Who's there?")
-                port.postMessage({answer: "Madame"});
-            else if (msg.question == "Madame who?")
-                port.postMessage({answer: "Madame... Bovary"});
-            });*/
-
+            setTimeout('var port = chrome.tabs.connect('+tabId+', {name: "00"}); port.postMessage({joke: "Knock knock"});', 1000); //flimsy
         }else{
             queue[tabId] = 1;
             
@@ -82,6 +73,10 @@ function onEvent(tabId, message, params) {
         }
     }
 }
+
+//Store request info in a queue
+//Listen for 'ready' message from tab
+//Dump out request info
 </script>
 </head>
 </html>
