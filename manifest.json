@@ -1,5 +1,5 @@
 {
-  "name": "Crowbar",
+  "name": "HTTP Puppeteer",
   "description": "Enables HTTP requests to be viewed, saved, modified & repeated",
   "version": "0.5",
   "permissions": [

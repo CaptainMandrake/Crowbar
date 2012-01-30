@@ -34,7 +34,7 @@ function startInterception(tabId){
 
     //window.addEventListener("load", function() {
     chrome.experimental.debugger.sendRequest(tabId, "Network.enable");
-    chrome.experimental.debugger.onEvent.addListener(onEvent); //aaaa
+    chrome.experimental.debugger.onEvent.addListener(onEvent);
     //});
 
     window.addEventListener("unload", function() {
@@ -75,7 +75,7 @@ function onEvent(tabId, message, params) {
 }
 
 //Store request info in a queue
-//Listen for 'ready' message from tab
+//start listener for 'ready' message from tab
 //Dump out request info
 </script>
 </head>
