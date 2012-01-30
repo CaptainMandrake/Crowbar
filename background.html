@@ -60,8 +60,18 @@ function onEvent(tabId, message, params) {
         req.url = params.response.url;
         
         //chrome.extension.connect({name: tabId});
-        if(queue[tabId] == 1){
-            chrome.tabs.sendRequest(tabId, {greeting: "hello"}, function(response) {});
+        if(queue[tabId] == 1){ //if an overlay has already been injected
+            var port = chrome.tabs.connect(tabId, {name: "00"});
+            alert('Sending message...');
+            port.postMessage({joke: "Knock knock"});
+            alert('Message posted');
+            /*port.onMessage.addListener(function(msg) {
+            if (msg.question == "Who's there?")
+                port.postMessage({answer: "Madame"});
+            else if (msg.question == "Madame who?")
+                port.postMessage({answer: "Madame... Bovary"});
+            });*/
+
         }else{
             queue[tabId] = 1;
             

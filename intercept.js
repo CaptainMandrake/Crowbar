@@ -11,9 +11,12 @@ document.body.appendChild(overlay);
 
 document.req = JSON.parse(document.req); //tainted
 
-try{
-chrome.extension.onRequest.addListener(
-  function(request, sender, sendResponse) {
-    alert(request);
+//try{
+
+chrome.extension.onConnect.addListener(function(port) {
+  alert('connected');
+  port.onMessage.addListener(function(msg) {
+    alert('message recieved!1');
   });
-}catch(err){alert(err.message);}
+});
+//}catch(err){alert(err.message);}
